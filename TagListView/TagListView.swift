@@ -14,7 +14,7 @@ import UIKit
 }
 
 @IBDesignable
-open class TagListView: UIView {
+@objc open class TagListView: UIView {
     
     @IBInspectable open dynamic var textColor: UIColor = .white {
         didSet {
@@ -361,17 +361,20 @@ open class TagListView: UIView {
     }
 
     @discardableResult
+    @objc
     open func addTag(_ title: String) -> TagView {
         defer { rearrangeViews() }
         return addTagView(createNewTagView(title))
     }
     
     @discardableResult
+    @objc
     open func addTags(_ titles: [String]) -> [TagView] {
         return addTagViews(titles.map(createNewTagView))
     }
     
     @discardableResult
+    @objc
     open func addTagView(_ tagView: TagView) -> TagView {
         defer { rearrangeViews() }
         tagViews.append(tagView)
@@ -381,6 +384,7 @@ open class TagListView: UIView {
     }
     
     @discardableResult
+    @objc
     open func addTagViews(_ tagViewList: [TagView]) -> [TagView] {
         defer { rearrangeViews() }
         tagViewList.forEach {
@@ -391,12 +395,14 @@ open class TagListView: UIView {
     }
 
     @discardableResult
+    @objc
     open func insertTag(_ title: String, at index: Int) -> TagView {
         return insertTagView(createNewTagView(title), at: index)
     }
     
 
     @discardableResult
+    @objc
     open func insertTagView(_ tagView: TagView, at index: Int) -> TagView {
         defer { rearrangeViews() }
         tagViews.insert(tagView, at: index)
@@ -405,15 +411,15 @@ open class TagListView: UIView {
         return tagView
     }
     
-    open func setTitle(_ title: String, at index: Int) {
+    @objc open func setTitle(_ title: String, at index: Int) {
         tagViews[index].titleLabel?.text = title
     }
     
-    open func removeTag(_ title: String) {
+    @objc open func removeTag(_ title: String) {
         tagViews.reversed().filter({ $0.currentTitle == title }).forEach(removeTagView)
     }
     
-    open func removeTagView(_ tagView: TagView) {
+    @objc open func removeTagView(_ tagView: TagView) {
         defer { rearrangeViews() }
         
         tagView.removeFromSuperview()
@@ -423,7 +429,7 @@ open class TagListView: UIView {
         }
     }
     
-    open func removeAllTags() {
+    @objc open func removeAllTags() {
         defer {
             tagViews = []
             tagBackgroundViews = []
@@ -434,10 +440,10 @@ open class TagListView: UIView {
         views.forEach { $0.removeFromSuperview() }
     }
 
-    open func selectedTags() -> [TagView] {
+    @objc open func selectedTags() -> [TagView] {
         return tagViews.filter { $0.isSelected }
     }
-    
+        
     // MARK: - Events
     
     @objc func tagPressed(_ sender: TagView!) {
@@ -450,4 +456,19 @@ open class TagListView: UIView {
             delegate?.tagRemoveButtonPressed?(tagView.currentTitle ?? "", tagView: tagView, sender: self)
         }
     }
+}
+
+extension TagListView {
+    
+    @objc open func tagsCount() -> Int {
+        return tagViews.count
+    }
+    
+    @objc open func tagNameList() -> [String] {
+        return tagViews
+            .map { $0.currentTitle }
+            .compactMap { $0! }
+            .filter { $0.isEmpty == false }
+    }
+
 }
